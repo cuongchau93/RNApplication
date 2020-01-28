@@ -22,12 +22,21 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {ENTRIES1, ENTRIES2} from './src/static/entries';
 import SliderEntry from './src/components/SliderEntry';
-import {itemWidth, sliderWidth} from "./src/styles/SliderEntry.style";
+import {itemWidth, sliderWidth} from './src/styles/SliderEntry.style';
+import {colors} from './src/styles/index.style';
+const SLIDER_1_FIRST_ITEM = 1;
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      slider1ActiveSlide: SLIDER_1_FIRST_ITEM,
+    };
+  }
+
   _renderItemWithParallax({item, index}, parallaxProps) {
     return (
       <SliderEntry
@@ -40,6 +49,8 @@ export default class App extends Component {
   }
 
   render() {
+    const {slider1ActiveSlide} = this.state;
+
     return (
       <>
         <StatusBar barStyle="dark-content" />
@@ -55,10 +66,27 @@ export default class App extends Component {
             )}
             <View style={styles.body}>
               <Carousel
-                data={ENTRIES2}
+                hasParallaxImages={true}
+                data={ENTRIES1}
                 sliderWidth={sliderWidth}
                 itemWidth={itemWidth}
                 renderItem={this._renderItemWithParallax}
+                firstItem={SLIDER_1_FIRST_ITEM}
+                onSnapToItem={index =>
+                  this.setState({slider1ActiveSlide: index})
+                }
+              />
+              <Pagination
+                dotsLength={ENTRIES1.length}
+                activeDotIndex={slider1ActiveSlide}
+                containerStyle={styles.paginationContainer}
+                dotColor={'rgba(255, 255, 255, 0.92)'}
+                dotStyle={styles.paginationDot}
+                inactiveDotColor={colors.black}
+                inactiveDotOpacity={0.4}
+                inactiveDotScale={0.6}
+                carouselRef={this._slider1Ref}
+                tappableDots={!!this._slider1Ref}
               />
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Step One</Text>
